@@ -10,7 +10,12 @@ JEOPARDY_CSV_URL = (
 def download_csv(target_filepath: Path) -> None:
     target_filepath.parent.mkdir(exist_ok=True)
 
-    # TODO: Skip if already exists
+    # Skip downloading if already exists
+    # TODO: Add a flag to allow force-download?
+    if target_filepath.exists():
+        print(target_filepath, 'already exists')
+        return
+
     with requests.get(url=JEOPARDY_CSV_URL, stream=True, timeout=60) as resp:
         resp.raise_for_status()
         with open(target_filepath, 'wb') as f_out:
