@@ -1,0 +1,87 @@
+# https://gist.github.com/gabrielhurley/1192142
+
+[MASTER]
+# Python code to execute, usually for sys.path manipulation such as pygtk.require().
+# init-hook=
+
+# Specify a configuration file.
+#rcfile=
+
+# Add files or directories to the blacklist. They should be base names, not paths.
+#ignore=
+
+# Pickle collected data for later comparisons.
+persistent=yes
+
+# A comma-separated list of package or module names from where C extensions may be loaded.
+# Extensions are loading into the active Python interpreter and may run arbitrary code.
+extension-pkg-allow-list=numpy,torch,lxml,pydantic,jq,orjson,pygit2,pyodbc,cx_Oracle,psycopg2
+
+# List of plugins (as comma separated values of python modules names) to load,
+# usually to register additional checkers.
+load-plugins=
+  pylint_pydantic,
+
+[MESSAGES CONTROL]
+
+# Return non-zero exit code if any of these messages/categories are detected.
+# I-messages do not count towards the exit code, by default.
+# https://pylint.readthedocs.io/en/latest/user_guide/configuration/all-options.html#fail-on
+fail-on=I
+
+# Disable the message, report, category or checker with the given id(s). You
+# can either give multiple identifier separated by comma (,) or put this option
+# multiple time (only on the command line, not in the configuration file where
+# it should appear only once).
+disable=
+  C0103,    # invalid-name
+  C0114,    # missing-module-docstring
+  C0115,    # missing-class-docstring
+  C0116,    # missing-function-docstring
+  C0302,    # too-many-lines
+  C0411,    # wrong-import-order -- covered by `isort`: https://pylint.readthedocs.io/en/latest/faq.html
+
+  E1205,    # logging-too-many-args (because we use custom logger style with {} instead of %s)
+
+  R0801,    # duplicate-code
+  R0902,    # too-many-instance-attributes
+  R0903,    # too-few-public-methods
+  R0904,    # too-many-public-methods
+  R0912,    # too-many-branches
+  R0913,    # too-many-arguments
+  R0914,    # too-many-locals
+  R1735,    # use-dict-literal
+
+  W0511,    # fixme
+  W0718,    # broad-exception-caught
+  W0719,    # broad-exception-raised
+  W1514,    # unspecified-encoding
+
+# Enable the message, report, category or checker with the given id(s). You can
+# either give multiple identifier separated by comma (,) or put this option
+# multiple time.
+enable=
+  I0021,    # useless-suppression
+  I0023,    # use-symbolic-message-instead
+
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}'
+
+
+[FORMAT]
+# Maximum number of characters on a single line.
+max-line-length=100
+
+# Maximum number of lines in a module
+max-module-lines=1000
+
+# String used as indentation unit. This is usually " " (4 spaces) or "\t" (1 tab).
+indent-string='    '
+
+
+[TYPECHECK]
+# Tells whether missing members accessed in mixin class should be ignored. A
+# mixin class is detected if its name ends with "mixin" (case insensitive).
+ignore-mixin-members=yes
+
+[LOGGING]
+logging-format-style=new

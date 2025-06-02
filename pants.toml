@@ -1,0 +1,134 @@
+[GLOBAL]
+pants_version = "2.25.0"
+
+# https://www.pantsbuild.org/docs/initial-configuration#enable-backends
+backend_packages = [
+  "pants.backend.python",
+  "pants.backend.python.lint.isort",
+  "pants.backend.python.lint.black",
+  "pants.backend.python.lint.pylint",
+  "pants.backend.python.lint.pyupgrade",
+  "pants.backend.python.lint.flake8",
+  "pants.backend.python.typecheck.mypy",
+  "pants.backend.build_files.fmt.black",
+  "pants.backend.shell",
+  "pants.backend.experimental.python",
+  "pants.backend.experimental.tools.yamllint",
+]
+
+# https://www.pantsbuild.org/docs/reference-global
+pants_subprocessdir = "%(buildroot)s/toolchain/.pids"
+pants_workdir = "%(buildroot)s/toolchain/.pants.d"
+
+# Define constants that can be referenced below, using a `%(CONST)s` syntax
+# https://www.pantsbuild.org/stable/docs/using-pants/key-concepts/options#config-file-interpolation
+[DEFAULT]
+CONST_PYTHON_VERSION = "3.12.*"  # Should be aligned with the version in `.python-version`
+
+[python]
+interpreter_constraints = ["==%(CONST_PYTHON_VERSION)s"]
+enable_resolves = true
+default_resolve = "python-default"
+
+[python.resolves]
+python-default = "toolchain/lockfiles/python-default.lockfile"
+
+# https://www.pantsbuild.org/docs/reference-python-infer#unowned_dependency_behavior
+[python-infer]
+unowned_dependency_behavior = "error"
+
+[anonymous-telemetry]
+enabled = false
+
+# Note: Make sure these are reflected in [isort].args below, for correct FIRSTPARTY discovery
+# https://www.pantsbuild.org/docs/initial-configuration#configure-source-roots
+[source]
+root_patterns = [
+    "/jeopardy",
+]
+
+# https://www.pantsbuild.org/docs/python-linters-and-formatters
+[black]
+config = "toolchain/config/pyproject.toml"
+interpreter_constraints = ["==%(CONST_PYTHON_VERSION)s"]
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#black",
+]
+
+[isort]
+config = "toolchain/config/.isort.cfg"
+interpreter_constraints = ["==%(CONST_PYTHON_VERSION)s"]
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#isort",
+]
+
+[flake8]
+config = "toolchain/config/setup.cfg"
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#flake8",
+]
+
+[pyupgrade]
+args = ["--py311-plus"]
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#pyupgrade",
+]
+
+[pylint]
+config = "toolchain/config/.pylintrc"
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#pylint",
+    "//jeopardy:reqs#pylint-pydantic",
+]
+
+[pytest]
+# Note 1: Modify `rootdir`, so that we get the correct test's path, with respect of the repo root:
+#   FAILED jeopardy/upgrade_readiness/inspections/tests/test_classification_models.py::TestNLCModelCompatibilityInspection::test_valid_models - AssertionError: Lists differ: [] != [123]
+# Without it we get:
+#   FAILED toolchain/config/::TestNLCModelCompatibilityInspection::test_valid_models - AssertionError: Lists differ: [] != [123]
+#
+# Note 2: Set an "absolute" `cache_dir`.
+# Some tests persist data on the disk and by default `pytest` would cache it under the ephemeral
+# temp-folder where the test runs, so the cache is lost on test completion.
+args = [
+    "--rootdir=.",
+    "-o cache_dir=%(buildroot)s/toolchain/.pytest_cache",
+]
+config = "toolchain/config/setup.cfg"
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#pytest",
+    "//jeopardy:reqs#parameterized",
+]
+
+[test]
+report = true
+
+[yamllint]
+config_file_name = "toolchain/config/.yamllint.yml"
+interpreter_constraints = ["==%(CONST_PYTHON_VERSION)s"]
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#yamllint",
+]
+
+[mypy]
+config = "toolchain/config/mypy.ini"
+interpreter_constraints = ["==%(CONST_PYTHON_VERSION)s"]
+install_from_resolve = "python-default"
+requirements = [
+    "//jeopardy:reqs#mypy",
+    "//jeopardy:reqs#mypy-extensions",
+    "//jeopardy:reqs#numpy",
+    "//jeopardy:reqs#pydantic",
+    "//jeopardy:reqs#types-requests",
+]
+
+# https://www.pantsbuild.org/docs/reference-cli
+[cli.alias]
+green = "fix lint check"

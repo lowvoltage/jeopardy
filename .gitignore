@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+**/__pycache__/*
+*.py[cod]
+*$py.class
+
+# Build & distribution
+dist/
+
+# PyCharm & Intellij IDEA
+/.idea/
+
+# Visual Studio Code Settings
+.vscode/
+
+# Type checker cache
+.mypy_cache/
+
+# Testing
+.pytest_cache/
