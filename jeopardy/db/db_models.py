@@ -1,3 +1,5 @@
+from typing import Any
+
 from sqlalchemy import Column, Date, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -17,3 +19,9 @@ class Jeopardy(Base):  # type: ignore [valid-type, misc]
     value = Column(Integer)
     question = Column(String)
     answer = Column(String)
+
+    # TODO: Is there an OOTB way to do this?
+    def to_dict(self) -> dict[str, Any]:
+        result = {field.name: getattr(self, field.name) for field in self.__table__.c}
+        result['value'] = f'${self.value}'  # TODO: Settle on an int/str policy for "value" field
+        return result

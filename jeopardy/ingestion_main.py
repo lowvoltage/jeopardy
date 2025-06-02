@@ -10,12 +10,13 @@ from sqlalchemy.orm import sessionmaker
 CSV_FILEPATH = DATA_PATH / 'jeopardy_questions.csv'
 
 
-def do_part_1() -> None:
+if __name__ == '__main__':
     # Download the dataset CSV
     download_csv(CSV_FILEPATH)
 
     # Read and validate into Python objects
     with open(CSV_FILEPATH) as f_in:
+        # Note: Without `skipinitialspace` the CSV headers do not map nicely into the model fields
         reader = csv.DictReader(f_in, skipinitialspace=True)
         dataset_questions = [JeopardyQuestion.model_validate(row) for row in reader]
 
@@ -53,9 +54,3 @@ def do_part_1() -> None:
 
     print('Loaded', len(dataset_questions), 'dataset questions')
     print('Persisted', session.query(Jeopardy).count(), 'questions in DB')
-
-
-if __name__ == '__main__':
-    print(DATA_PATH)
-
-    do_part_1()
