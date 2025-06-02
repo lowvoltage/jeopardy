@@ -4,6 +4,7 @@
 *$py.class
 
 # Build & distribution
+data/
 dist/
 
 # PyCharm & Intellij IDEA
