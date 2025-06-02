@@ -11,7 +11,7 @@ Base = declarative_base()
 class Jeopardy(Base):  # type: ignore [valid-type, misc]
     __tablename__ = 'jeopardy'
 
-    id = Column(Integer, primary_key=True)
+    question_id = Column(Integer, primary_key=True)
     show_no = Column(Integer)
     air_date = Column(Date)
     round = Column(String)
