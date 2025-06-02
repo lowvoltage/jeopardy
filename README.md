@@ -13,6 +13,7 @@ A simple backend service that allows players to pick random "Jeopardy!" question
 1. Install `pants`. Run `./toolchain/get-pants.sh` in the repo root
 2. Run code inspections (isort, black, pylint, mypy, etc): `pants green ::`
 3. Run unit tests: `pants test ::`
+4. Run the ingestion pipeline: `pants run jeopardy/ingestion_main.py`
 
 ## API Documentation
 Interactive OpenAPI documentation is available at http://127.0.0.1:8000/docs
