@@ -4,13 +4,13 @@ from db.db_models import Jeopardy
 from env import DATA_PATH, DB_URI
 from ingestion.dataset import download_csv
 from ingestion.models import JeopardyQuestion
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker
 
 CSV_FILEPATH = DATA_PATH / 'jeopardy_questions.csv'
 
 
-if __name__ == '__main__':
+def ingest_dataset(engine: Engine | None = None) -> None:
     # Download the dataset CSV
     download_csv(CSV_FILEPATH)
 
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     #     print(q)
 
     # Create an engine connected to the SQLite database
-    engine = create_engine(DB_URI)
+    engine = engine or create_engine(DB_URI)
 
     # ReCreate all tables in the engine
     # TODO: [Better] DB lifecycle management. Replace with an "exists" check?
@@ -54,3 +54,7 @@ if __name__ == '__main__':
 
     print('Loaded', len(dataset_questions), 'dataset questions')
     print('Persisted', session.query(Jeopardy).count(), 'questions in DB')
+
+
+if __name__ == '__main__':
+    ingest_dataset()
